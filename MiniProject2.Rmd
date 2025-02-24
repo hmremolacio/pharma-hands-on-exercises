@@ -1,7 +1,7 @@
 ---
 title: "Mini-project 2 - Summarising continuous and categorical data"
-author: "Mike K Smith"
-date: "02/13/2023"
+author: "Hazel M. Remolacio"
+date: "02/21/2025"
 output: html_document 
 ---
 
@@ -45,7 +45,7 @@ library(rio)
 2.  Read in the CDISC adsl data from the GitHub location (`https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adsl.xpt`) and assign this to an object in R using the assignment operator `<-`. Make sure that the URL location is a character string by enclosing it in `" "`. The `rio` package has a function called `import` that reads data into R and infers the data type from the file name. The first argument of that function is `file`. Paste the file path / URL above after the `file=` argument in the code below, then run the chunk using the green arrow.
 
 ```{r read_adsl_data}
-adsl <- import( file = ""  )
+adsl <- import( file = "https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adsl.xpt"  )
 adsl
 ```
 
@@ -69,8 +69,7 @@ If you are unsure, try each option by pasting in the filter statement after the 
 ------------------------------------------------------------------------
 
 ```{r create_adsl_saf}
-adsl_eff <-   adsl %>%
-  filter(  )
+adsl_eff <- filter(.data = adsl, EFFFL == "Y")
 adsl_eff
 ```
 
@@ -82,7 +81,7 @@ DEFENSIVE PROGRAMMING in R: If you're dealing with data where you can't guarante
 
 3.  Calculate the marginal totals (N) - count the number of individuals in each treatment group.
 
-Next we need to count and save the marginal totals (big N) to act as the denominator for the calculation of the percentage of observations in each table cell = n/N \* 100%
+Next we need to count and save the marginal totals (big N) to act as the denominator for the calculation of the percentage of observations in each table cell = n/N * 100%
 
 In the R chunk below, we start with the `adsl_eff` dataset and count the number of observations in each level of the variables specified in the `group_by()` function.
 
@@ -92,7 +91,7 @@ In the next code chunk we want to calculate the number of observations within ea
 
 ```{r group_by}
 adsl_eff %>%
-  group_by( ) %>%
+  group_by(TRT01A) %>%
   count(name = "N")
 ```
 
@@ -102,7 +101,7 @@ Whenever you use `group_by()` R will carry along the grouping variables into the
 
 ```{r big_N}
 Big_N_cnt <- adsl_eff %>%
-  group_by(   ) %>%
+  group_by(TRT01AN, TRT01A) %>%
   count(name = "N")
 Big_N_cnt
 ```
@@ -113,7 +112,7 @@ Big_N_cnt
 
 ```{r small_n}
 small_n_cnt <- adsl_eff %>%
-  group_by( TRT01AN, TRT01A,  ) %>%
+  group_by( TRT01AN, TRT01A,  SEX) %>%
   count(name = "n")
 small_n_cnt
 ```
@@ -122,7 +121,7 @@ Do we get different answers if we use the `group_by()` variables in a different 
 
 ```{r change_group_order}
 adsl_eff %>%
-  group_by(  ) %>%
+  group_by(SEX, TRT01A, TRT01AN) %>%
   count(name = "n")
 ```
 
@@ -200,7 +199,7 @@ adsl_mrg_cnt %>%
   mutate(perc_char = format(perc, nsmall=1))
 ```
 
-Notice in this output that the column `perc` is of type `<dbl>` while `perc_char` is of type `<char>`. Anything that is is character type in R will not be further formatted and will display "as is" in a table or listing.
+Notice in this output that the column `perc` is of type `<dbl>` while `perc_char` is of type `<char>`. Anything that is character type in R will not be further formatted and will display "as is" in a table or listing.
 
 9.  Paste together the count and percentage
 
