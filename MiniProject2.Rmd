@@ -301,8 +301,15 @@ In steps 6, 7, 8 and 9 we have looked at R chunks that merge the data, calculate
 
 ```{r pipeline}
 # Paste commands above after the "<-" assignment, one per line
-adsl_mrg_cnt <- 
-  
+adsl_mrg_cnt <- small_n_cnt %>% 
+                  left_join(Big_N_cnt) %>%
+                  mutate(perc = round(n/N*100, digits=1)) %>%
+                  mutate(perc_char = format(perc, nsmall=1)) %>%
+                  mutate(npct = paste(n, "(", perc_char, ")" ) ) %>%
+                  mutate(SEX = recode(SEX, "M" = "Male", "F" = "Female")) %>%
+                  ungroup() %>%   
+                  select(TRT01A, SEX, npct)
+          
 
 # Display this data so we can check it
 adsl_mrg_cnt
@@ -324,9 +331,30 @@ adsl_mrg_cnt %>%
 Repeat the steps above, but add an additional grouping variable to the calculation of Big_N\_cnt and small_n\_cnt - `AGEGRP`. Here's the first step:
 
 ```{r}
-adsl_saf %>%
-  group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1) %>%
-  count(name = "N")
+# adsl_saf %>%
+#   group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1) %>%
+#   count(name = "N")
+
+adsl_saf <- filter(.data = adsl, SAFFL == "Y")
+
+Big_N_cnt_saf <- adsl_saf %>%
+  		group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1) %>%
+  		count(name = "N")
+
+small_n_cnt_saf <- adsl_saf %>%
+  		group_by( TRT01AN, TRT01A, AGEGR1N, AGEGR1, SEX) %>%
+  		count(name = "n")
+
+adsl_mrg_cnt_saf <- small_n_cnt %>% 
+                    left_join(Big_N_cnt, by = c("TRT01A", "TRT01AN", "AGEGR1N", "AGEGR1")) %>%
+                    mutate(perc = round(n/N*100, digits=1)) %>%
+                    mutate(perc_char = format(perc, nsmall=1)) %>%
+                    mutate(npct = paste(n, "(", perc_char, ")" ) ) %>%
+                    mutate(SEX = recode(SEX, "M" = "Male", "F" = "Female")) %>%
+                    ungroup() %>%   
+                    select(TRT01A, AGEGR1, SEX, npct) %>% 
+		                pivot_wider(names_from = TRT01A, values_from = npct)
+adsl_mrg_cnt_saf
 ```
 
 To check that your code is reproducible, you will want to use the "knit" button on the RStudio IDE interface to create an HTML file based on your saved .Rmd file. If your code chunks are reproducible then you should get an HTML file as a result. If NOT (if there's an error or if the "knit" process fails) then click on the arrow to the right of the "Run" button and select "Restart R and Run All Chunks". Then troubleshoot which chunk is causing problems.
