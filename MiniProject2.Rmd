@@ -380,7 +380,7 @@ small_n_cnt_saf <- adae_saf %>%
   		count(name = "n")
 small_n_cnt_saf
 
-adsl_mrg_cnt_saf <- small_n_cnt_saf %>% 
+adae_mrg_cnt_saf <- small_n_cnt_saf %>% 
                     left_join(Big_N_cnt_saf, by = c("TRTA", "TRTAN")) %>%
                     mutate(perc = round(n/N*100, digits=1)) %>%
                     mutate(perc_char = format(perc, nsmall=1)) %>%
@@ -388,7 +388,7 @@ adsl_mrg_cnt_saf <- small_n_cnt_saf %>%
                     ungroup() %>%   
                     select(TRTA, AEBODSYS, npct) %>% 
 		                pivot_wider(names_from = TRTA, values_from = npct)
-adsl_mrg_cnt_saf
+adae_mrg_cnt_saf
 
 
 ```
