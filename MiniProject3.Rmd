@@ -217,25 +217,18 @@ w_stat <- adsl_eff %>%
             min = (min(WEIGHTBL) %>% round(digits = 0) %>% format(nsmall=0)), 
             max = (max(WEIGHTBL) %>% round(digits = 0) %>% format(nsmall=0)),
             n = n()) %>% 
-  mutate(range_minmax = paste0("(",min, ",", max,")"))
-# w_stat
-
-w_desc_stat_long <- w_stat %>%
+  mutate(range_minmax = paste0("(",min, ",", max,")")) %>% 
   ungroup() %>%
   select("TRT01A","SEX", "n", "mean", "med", "sd", "range_minmax") %>% 
   mutate(across(where(is.numeric), .fns = as.character)) %>%
-  pivot_longer(-c("TRT01A","SEX"), names_to ="category", values_to = "values" )
-# w_desc_stat_long
-
-w_stat_cat <- w_desc_stat_long %>%
+  pivot_longer(-c("TRT01A","SEX"), names_to ="category", values_to = "values" ) %>% 
   pivot_wider(names_from = c(TRT01A, SEX), values_from = values) %>%
   mutate(category = case_when(category == "n" ~ "N",
                               category == "med" ~ "Median", 
                               category == "mean" ~ "Mean", 
                               category == "sd" ~ "Std Dev", 
                               category == "range_minmax" ~ "Range (min,max)"))
-w_stat_cat
-
+# w_stat
 
 #HEIGHT
 h_stat <- adsl_eff %>%
@@ -246,27 +239,22 @@ h_stat <- adsl_eff %>%
             min = (min(HEIGHTBL) %>% round(digits = 0) %>% format(nsmall=0)), 
             max = (max(HEIGHTBL) %>% round(digits = 0) %>% format(nsmall=0)),
             n = n()) %>% 
-  mutate(range_minmax = paste0("(",min, ",", max,")"))
-# h_stat
-
-
-h_desc_stat_long <- h_stat %>%
+  mutate(range_minmax = paste0("(",min, ",", max,")")) %>% 
   ungroup() %>%
   select("TRT01A","SEX", "n", "mean", "med", "sd", "range_minmax") %>% 
   mutate(across(where(is.numeric), .fns = as.character)) %>%
-  pivot_longer(-c("TRT01A","SEX"), names_to ="category", values_to = "values" )
-# h_desc_stat_long
-
-
-h_stat_cat <- h_desc_stat_long %>%
+  pivot_longer(-c("TRT01A","SEX"), names_to ="category", values_to = "values" ) %>% 
   pivot_wider(names_from = c(TRT01A, SEX), values_from = values) %>%
   mutate(category = case_when(category == "n" ~ "N",
                               category == "med" ~ "Median", 
                               category == "mean" ~ "Mean", 
                               category == "sd" ~ "Std Dev", 
-                              category == "range_minmax" ~ "Range (min,max)")) 
-h_stat_cat
+                              category == "range_minmax" ~ "Range (min,max)"))
+# h_stat
 
+final <- rbind(w_stat, h_stat)
+final
+  
 ```
 
 
