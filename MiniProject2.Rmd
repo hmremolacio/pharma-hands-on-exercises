@@ -331,24 +331,16 @@ adsl_mrg_cnt %>%
 Repeat the steps above, but add an additional grouping variable to the calculation of Big_N\_cnt and small_n\_cnt - `AGEGRP`. Here's the first step:
 
 ```{r}
-# adsl_saf %>%
-#   group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1) %>%
-#   count(name = "N")
-
-adsl_saf <- filter(.data = adsl, SAFFL == "Y")
-
-Big_N_cnt_saf <- adsl_saf %>%
+Big_N_cnt <- adsl_eff %>%
   		group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1) %>%
   		count(name = "N")
-Big_N_cnt_saf
 
-small_n_cnt_saf <- adsl_saf %>%
+small_n_cnt <- adsl_eff %>%
   		group_by( TRT01AN, TRT01A, AGEGR1N, AGEGR1, SEX) %>%
   		count(name = "n")
-small_n_cnt_saf
 
-adsl_mrg_cnt_saf <- small_n_cnt_saf %>% 
-                    left_join(Big_N_cnt_saf, by = c("TRT01A", "TRT01AN", "AGEGR1", "AGEGR1N")) %>%
+adsl_mrg_cnt <- small_n_cnt %>% 
+                    left_join(Big_N_cnt, by = c("TRT01A", "TRT01AN", "AGEGR1", "AGEGR1N")) %>%
                     mutate(perc = round(n/N*100, digits=1)) %>%
                     mutate(perc_char = format(perc, nsmall=1)) %>%
                     mutate(npct = paste(n, "(", perc_char, ")" ) ) %>%
@@ -356,7 +348,7 @@ adsl_mrg_cnt_saf <- small_n_cnt_saf %>%
                     ungroup() %>%   
                     select(TRT01A, AGEGR1, SEX, npct) %>% 
 		                pivot_wider(names_from = TRT01A, values_from = npct)
-adsl_mrg_cnt_saf
+adsl_mrg_cnt
 
 ```
 
