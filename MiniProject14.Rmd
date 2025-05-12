@@ -177,7 +177,6 @@ One of the uses for snippets is to create a header template that programmers can
 #Revision    Author        Date       Description
 #1.1       author    date    Initial Creation
 ######################################################################
-
 ```
  
 
