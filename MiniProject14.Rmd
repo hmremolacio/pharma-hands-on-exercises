@@ -1,7 +1,7 @@
 ---
 title: "Mini-project 14 - R snippets"
-author: "Leanne Vicente"
-date: "5/15/2023"
+author: "Hazel Remolacio"
+date: "5/12/2025"
 output: html_document
 ---
 
@@ -16,13 +16,15 @@ To insert a snippet, in your R script or RMarkdown file, start typing in the nam
 
 
 ```{r function1}
-
+name <- function(variables) {
+  
+}
 ```
 
 If you select the snippet from the completion list, it will be inserted along with several text placeholders which you can fill in by typing and then pressing Tab to advance to the next placeholder:
 
 ```{r function2}
-name <- function(variables) {
+new_function <- function(var1) {
   
 }
 ```
@@ -35,7 +37,7 @@ If you have typed the character sequence for a snippet and want to insert it imm
 ## Common Useful Snippets
 1. `lib` = library()
 2. `req` = require()
-3. `source` = source() 
+3. `src` = source() 
 4. 	`df` for defining data frames
 5.	`mat` for defining matrices
 6.	`if`, `el`, and `ei` for conditional expressions
@@ -44,7 +46,34 @@ If you have typed the character sequence for a snippet and want to insert it imm
 
 
 ```{r common_snip}
+library(package)
+require(package)
+source("file.R")
+df
+matrix(data, nrow = rows, ncol = cols)
+if (condition) {
+  
+}
+else {
+  
+}
+else if (condition) {
+  
+}
+apply(array, margin, ...)
+lapply(list, function)
+sapply(list, function)
+library(shiny)
 
+ui <- fluidPage(
+  
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
 ```
 
 ## Customizing Snippets
@@ -118,6 +147,37 @@ One of the uses for snippets is to create a header template that programmers can
 #1.1       ${4:author}    ${5:date}    Initial Creation
 ######################################################################
 
+
+#Applying the snippet using my_header
+######################################################################
+#
+#Purpose: To create plot_type  Plot
+#' ---
+#' title: ""
+#' author: ""
+#' date: ""
+#' ---
+#
+#Assumptions: -None-
+#
+#Calls to: plot_name.R
+#
+#Inputs: 
+#  data_input.sas7bdat
+#          
+#Outputs: PDF/HTML Graph file depending on TOT 
+#
+#References: 
+#   refer to graph mocks
+#
+#Usage notes: This report is plotted at subject level.
+######################################################################
+#History
+######################################################################
+#Revision    Author        Date       Description
+#1.1       author    date    Initial Creation
+######################################################################
+
 ```
  
 
@@ -126,7 +186,7 @@ This snippet will set your working directory, and then also load whatever packag
 
 ```{r}
 ######################################################################
-path1 <- getwd()
+path1 <- setwd("${1:path}")
 
 library(knitr)
 library(tinytex)
@@ -135,6 +195,17 @@ library(tidyverse)
 library(rmarkdown)
 ######################################################################
 
+
+#Applying the R snippet using my_lib
+######################################################################
+path1 <- setwd("path")
+
+library(knitr)
+library(tinytex)
+library(rio)
+library(tidyverse)
+library(rmarkdown)
+######################################################################
 ```
 
 
@@ -158,6 +229,23 @@ ggplot(${1:data}, aes(x=${2:variable}, y=${3:variable})) +
   ggtitle("<Enter Text>", subtitle = "<Enter Text>")
 ######################################################################
 
+
+#Applying the R snippet using my_plot
+######################################################################
+ggplot(data, aes(x=variable, y=variable)) + 
+  geom_col(color = "black", fill="#0072B2") +
+  theme_minimal() +
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "gray"),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)
+  ) +
+  scale_y_continuous(label = comma) + 
+  xlab("") +
+  ylab("") +
+  geom_text(aes(label=variable), vjust=1.5, colour="white", position=position_dodge(.9), size=5) +
+  ggtitle("<Enter Text>", subtitle = "<Enter Text>")
+######################################################################
 ```
 
 Reminder, in Mini Projects 7 and 11 we discussed writing functions for chunks of code that you use again and again. You could also create a function for the above code for reuse. 
