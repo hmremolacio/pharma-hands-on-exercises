@@ -24,7 +24,7 @@ name <- function(variables) {
 If you select the snippet from the completion list, it will be inserted along with several text placeholders which you can fill in by typing and then pressing Tab to advance to the next placeholder:
 
 ```{r function2}
-new_function <- function(var1) {
+fun1 <- function(var1) {
   
 }
 ```
