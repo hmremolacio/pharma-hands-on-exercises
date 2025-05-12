@@ -232,7 +232,7 @@ dm_allcomb
 
 1.  Reorder the age variables to be in the correct order (<65, 65-80, >80)
 
-```{r allcomb}
+```{r age cat ordered}
 age_cat_ordered <- age_cat %>%
   dplyr::mutate(category = factor(category,
                     levels = c("<65", "65-80", ">80"))) %>%
@@ -244,7 +244,7 @@ age_cat_ordered
 
 2.  Move N before Age- categories.
 
-```{r allcomb}
+```{r dm age cat ordered}
 dm_allcomb_reord <- bind_rows(agestat_cat[1,], age_cat_ordered, agestat_cat[c(2:nrow(agestat_cat)),]) %>% 
   add_row(category="AGE", .before=2)
 dm_allcomb_reord
@@ -252,7 +252,7 @@ dm_allcomb_reord
 
 3.  Add Ethnicity and Race.
 
-```{r allcomb}
+```{r ethnicity}
 #Add Ethnicity
 #Calculate counts for groups
 ethnic_N_cnt <- adsl_eff %>%
@@ -306,7 +306,7 @@ ethnic_cat <- rename(Ethnic_trans, category=ETHNIC) %>%
 ethnic_cat
 ```
 
-```{r allcomb}
+```{r race}
 #Add Race
 #Calculate counts for groups
 race_N_cnt <- adsl_eff %>%
@@ -358,7 +358,7 @@ race_cat <- rename(Race_trans, category=RACE) %>%
 
 race_cat
 ```
-```{r allcomb}
+```{r final table}
 #Make final table
 
 dm_final <- bind_rows(dm_allcomb_reord, ethnic_cat, race_cat)
@@ -367,25 +367,4 @@ dm_final
 ```
 
 Save the .RMD file on your desktop and click on the "Knit" button at the top of the file to render an HTML version of this document.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
