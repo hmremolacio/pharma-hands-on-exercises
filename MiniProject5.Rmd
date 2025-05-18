@@ -1,7 +1,7 @@
 ---
 title: "Mini-project 5 - Getting started with {ggplot2}"
-author: "Mike K Smith"
-date: "2/16/2023"
+author: "Hazel Remolacio"
+date: "5/18/2025"
 output: html_document
 ---
 
@@ -95,9 +95,8 @@ In Step 4 above, we defined a `group` mapping to show data for each level of `TR
 
 ```{r}
 plot1 <- PR %>%
-  ggplot(data = PR, mapping = aes(x=ADY, y=AVAL, group =  )) +
+  ggplot(data = PR, mapping = aes(x=ADY, y=AVAL, group=USUBJID)) +
   geom_line()
-
 plot1
 ```
 
@@ -109,10 +108,10 @@ Change the text in the `labs()` statement below to make sensible titles and axes
 
 ```{r}
 plot2 <- plot1 + 
-  labs(title = "Plot Title",
-       subtitle = "Plot subtitle",
-       x = "X-axis label",
-       y = "Y-axis label",
+  labs(title = "Pulse Rates during Active Treatment Period",
+       subtitle = "Post-baseline",
+       x = "Analysis Relative Day",
+       y = "Pulse Rate (beats/min)",
        caption = paste("Plot created on:",Sys.Date()))
 plot2
 ```
@@ -123,6 +122,15 @@ You can also choose a theme for the plot from a wide range of `{ggplot2}` themes
 plot3 <- plot2 +
   theme_bw()
 plot3
+
+plot3.2 <- plot2 +
+  theme_cowplot()
+plot3.2
+
+plot3.3 <- plot2 +
+  theme_light()
+plot3.3
+
 ```
 
 ## 7. Split by treatment arm
@@ -133,6 +141,18 @@ The next thing we might want to do is to split the above plot (which shows ALL s
 plot4 <- plot3 +
   facet_wrap(facets = "TRTA")
 plot4
+
+plot4.2 <- plot3 +
+  facet_grid(rows = vars(TRTA))
+plot4.2
+
+plot4.3 <- plot3 +
+  facet_grid(cols = vars(TRTA))
+plot4.3
+
+plot4.4 <- plot3 +
+  facet_grid(cols = vars(TRTA), rows = vars(SEX))
+plot4.4
 ```
 
 Now that you know how, you can employ ANY variable to split the plot e.g. SEX, PERIOD, ...
@@ -157,7 +177,7 @@ We can do this using the built in {ggplot2} functions `stat_summary`.
 
 ```{r}
 plot3 + 
-  stat_summary(geom = "point", fun = median, color = "red")
+  stat_summary(geom = "point", fun = median, color = "lightgreen")
 ```
 
 In the `plot3` object, we have a grouping attribute in the `ggplot` function call mapped to `USUBJID` from the dataset. By specifying this `group` aesthetic we are telling R that any `geom_` and `stat_` functions should use the same grouping. So that means that the `stat_summary` is attempting to display the median values at each time point ***for every subject.*** Which is probably NOT what we actually want, since there is only one observation per subject per time point.
@@ -166,7 +186,7 @@ So how do we go back to one showing medians calculate across ALL subjects?
 
 ```{r}
 plot3 +
-  stat_summary(mapping = aes(group = NULL), fn = median, colour = "red")
+  stat_summary(mapping = aes(group = NULL), fn = median, colour = "lightgreen")
 ```
 
 Not all subjects have been assessed for vital signs on the same day of the treatment period. Let's look at the same plot as above, but using the calculated variable `StudyWeek`.
@@ -188,7 +208,7 @@ dataWeeks %>%
 ggplot(mapping = aes(x = StudyWeek, y = AVAL)) +
   stat_summary(mapping = aes(group = NULL), 
                fun = median, 
-               colour = "red")
+               colour = "lightgreen")
 
 ```
 
@@ -198,9 +218,9 @@ Now we might want to superimpose these medians onto the spaghetti plots above. B
 plot3 + 
   stat_summary(data = dataWeeks,
     mapping = aes(x = ADY,
-                             group = NULL), 
+               group = NULL), 
                fun = median, 
-               colour = "red")
+               colour = "lightgreen")
 
 ```
 
@@ -225,8 +245,8 @@ To see the elements of a list in the RStudio IDE, go to the Environment tab and 
 plot4$mapping
 ```
 
-From this information, you'll see that the `x` and `y` attributes are being mapped to variable names `ADY` and `PARAM`. What we might want to do is to extract the variable ***names*** in these attributes and use them to determine labels for the plot.\
-\
+From this information, you'll see that the `x` and `y` attributes are being mapped to variable names `ADY` and `PARAM`. What we might want to do is to extract the variable ***names*** in these attributes and use them to determine labels for the plot.
+
 In programming, we sometimes want to use a variable name to tell us which column contains values, and sometimes we just want to use the name of that variable. In this case, because we want to just use the name, we need to tell R to turn the variable "pointer" to a character string. We do this using the `quo_name` function. We'll look more at how to refer to variables and use them in functions in a later Mini-Project.
 
 In the code below we have created a function called `uniqueVal`. This function is going to be used to extract information from dataset variables that can be used in axes labels. Again, in a future Mini-Project we'll look in more depth at creating your own functions. For now, just be aware that we've written a function to find the unique value of a given variable in the dataset. We have a little defensive programming that checks that the variable doesn't contain more than one unique value.
@@ -294,8 +314,46 @@ SysBP_plot +
 
 ## Challenge
 
-Do the same for Diastolic BP and Temperature. Ensure that the axes labels match the type of data used.\
+Do the same for Diastolic BP and Temperature. Ensure that the axes labels match the type of data used.
 Update `plot4` for the new endpoint.
+
+```{r}
+create_plot <- function(plot_template, paramn_val){
+  param_data <- ADVS  %>%
+    filter(PARAMN == {{paramn_val}}) %>%
+    filter(VISITNUM > 3) 
+  
+  param_plot <- {{plot_template}} %+%
+    param_data
+  
+  xLab <- quo_name(param_plot$mapping$x)
+  yLab <- quo_name(param_plot$mapping$y)
+  groupLab <- quo_name(param_plot$mapping$group)
+  
+  study <- uniqueVal(param_plot$data$STUDYID)
+  measure <- uniqueVal(param_plot$data$PARAM)
+  
+  
+  xLab <- ifelse(xLab == "ADY", "Analysis Relative Day", xLab)
+  groupLab <- case_when(groupLab == "USUBJID" ~ "Subject", 
+                        groupLab == "TRTA" ~ "Treatment",
+                        TRUE ~ groupLab)
+  
+  param_plot + 
+    labs(title = glue::glue("Study {study}"),
+         subtitle = glue::glue("Plot of {measure} by {groupLab}"),
+         x = xLab,
+         y = glue::glue("{measure}"))
+
+  
+}
+
+DiasBP_plot <- create_plot(plot4, 2)
+Temp_plot <- create_plot(plot4, 6)
+
+DiasBP_plot
+Temp_plot
+```
 
 ## Extra challenge
 
