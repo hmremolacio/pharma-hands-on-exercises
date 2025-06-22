@@ -358,6 +358,7 @@ race_cat <- rename(Race_trans, category=RACE) %>%
 
 race_cat
 ```
+
 ```{r final table}
 #Make final table
 
