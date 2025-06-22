@@ -360,10 +360,10 @@ Temp_plot
 Read in vital signs data from another study which uses the `VS` or `ADVS` dataset standards. What code needs to change when you produce Pulse Rate plot for the new dataset (compared to the Pulse Rate plot which uses data values to determine labels)?
 
 ```{r}
-create_plot <- function(plot_template, paramn_val){
-  param_data <- ADVS  %>%
-    filter(PARAMN == {{paramn_val}}) %>%
-    filter(VISITNUM > 3) 
+create_plot <- function(data, plot_template, param, active_period){
+  param_data <- {{data}}  %>%
+    filter(PARAM == {{param}}) %>%
+    filter(VISITNUM >= {{active_period}}) 
   
   param_plot <- {{plot_template}} %+%
     param_data
@@ -390,9 +390,12 @@ create_plot <- function(plot_template, paramn_val){
   
 }
 
-ADVS_2 <- import("https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdiscpilot01/advs.xpt")
-PulseRate_plot <- create_plot(plot4, 3)
+ADVS_2 <- import("adam_advs_data_neurology.xpt")
+PulseRate_plot <- create_plot(ADVS_2, plot4, "Heart Rate", 4)
 PulseRate_plot
+
+#Add as function inputs: dataset, start of active treatment period
+#Filter PARAM instead of PARAMN since latter is not in the sample dataset
 
 ```
 
