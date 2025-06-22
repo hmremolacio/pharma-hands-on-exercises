@@ -1,7 +1,7 @@
 ---
 title: "Mini-project 7 - Getting started writing functions"
-author: "Mike K Smith"
-date: "3/2/2023"
+author: "Hazel M. Remolacio"
+date: "5/25/2025"
 output: html_document
 ---
 
@@ -151,7 +151,7 @@ Use the RStudio IDE `fun` snippet to create a function called "adsl_counts" base
 ```{r}
 
 adsl_counts <- function(dataFile){
- adsl_saf <- read_xpt(  ) %>%
+ adsl_saf <- read_xpt(dataFile) %>%
     filter(SAFFL == "Y")
   
   Big_N_cnt <-  adsl_saf %>%
@@ -207,10 +207,51 @@ stringr::str_detect(inFile, "adsl")
 R has some functions which help you pass messages, warnings and error messages back to the user. It's a good idea when you write functions to try to make these messages meaningful so that the user can figure out what went wrong and how to correct this. The `try` function will attempt to run some code, and if it fails the `stop` message will be displayed. Try it out for various values of `inFile`.
 
 ```{r}
+inFile <- "https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adae.xpt"
+
 try(if(!stringr::str_detect(inFile, "adsl")) stop("Input data is not CDISC adsl dataset"))
 ```
-
 Now try applying the `adsl_counts`function to using a dataset that isn't an ADaM dataset (or one that isn't `adsl`).
+
+```{r}
+adsl_counts <- function(dataFile){
+  try(if(!stringr::str_detect(inFile, "adsl")) stop("Input data is not CDISC adsl dataset"))
+
+ adsl_saf <- read_xpt(dataFile) %>%
+    filter(SAFFL == "Y")
+  
+  Big_N_cnt <-  adsl_saf %>%
+    group_by( TRT01AN, TRT01A  ) %>%
+    count(name = "N")
+  Big_N_cnt
+  
+  small_n_cnt <- adsl_saf %>%
+    group_by( TRT01AN, TRT01A,  SEX ) %>%
+    count(name = "n")
+  small_n_cnt
+  
+  adsl_mrg_cnt <- small_n_cnt %>%
+    left_join(Big_N_cnt, by = c("TRT01A", "TRT01AN")) %>%
+    mutate(perc = round((n/N)*100, digits=1)) %>%
+    mutate(perc_char = format(perc, nsmall=1)) %>%
+    mutate(npct = paste(n, 
+                        paste0( "(", perc_char, ")" ) 
+                        ) 
+           ) %>%
+    mutate(SEX = recode(SEX, 
+                        "M" = "Male",
+                        "F" = "Female")) %>%
+    ungroup() %>%
+    select(TRT01A, SEX, npct) %>%
+    pivot_wider(names_from = TRT01A, values_from = npct) 
+  return(adsl_mrg_cnt)
+}
+
+inFile <- "https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adae.xpt"
+
+adsl_counts(inFile)
+
+```
 
 #### Naming arguments is hard
 
@@ -223,8 +264,8 @@ My recommendation is to write the function, check that it works, THEN go back th
 2.  from the "Code" menu, select "Rename in scope" - type `adsl_File` to rename the argument AND instances of this argument ***within the function***.
 
 ```{r}
-adsl_counts <- function(dataFile){
-    adsl_saf <- read_xpt(  ) %>%
+adsl_counts <- function(adsl_File){
+    adsl_saf <- read_xpt(adsl_File) %>%
     filter(SAFFL == "Y")
   
   Big_N_cnt <- adsl_saf %>%
@@ -252,7 +293,7 @@ adsl_counts <- function(dataFile){
     select(TRT01A, SEX, npct) %>%
     pivot_wider(names_from = TRT01A, values_from = npct)
   
-  adsl_mrg_cnt
+  return(adsl_mrg_cnt)
 }
 ```
 
@@ -267,16 +308,13 @@ As we said earlier, if we're writing functions for use in `{tidyverse}` data pip
 Amend the function code below to instead calculate based on an input dataset, like the `adsl_saf` data. You'll need to update code for `Big_N_cnt` and `small_n_cnt` to point to the input to the function (the input dataset). Check that the code works by running the chunk.
 
 ```{r}
-adsl_counts <- function(adsl_FilePath) {
-  adsl_saf <- read_xpt(   ) %>%
-    filter(SAFFL == "Y")
-  
-  Big_N_cnt <-  adsl_saf   %>%
+adsl_counts <- function(adsl_popn) {
+  Big_N_cnt <-  adsl_popn   %>%
     group_by( TRT01AN, TRT01A  ) %>%
     count(name = "N")
   Big_N_cnt
   
-  small_n_cnt <-  adsl_saf  %>%
+  small_n_cnt <-  adsl_popn  %>%
     group_by( TRT01AN, TRT01A,  SEX ) %>%
     count(name = "n")
   small_n_cnt
@@ -302,8 +340,9 @@ adsl_counts <- function(adsl_FilePath) {
 inFile <- "https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adsl.xpt"
 
 table1 <- read_xpt(inFile) %>%
-    filter(SAFFL == "Y") %>%
+  filter(SAFFL == "Y") %>%
   adsl_counts()
+
 table1
 ```
 
