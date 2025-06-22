@@ -360,5 +360,42 @@ Temp_plot
 Read in vital signs data from another study which uses the `VS` or `ADVS` dataset standards. What code needs to change when you produce Pulse Rate plot for the new dataset (compared to the Pulse Rate plot which uses data values to determine labels)?
 
 ```{r}
+create_plot <- function(plot_template, paramn_val){
+  param_data <- ADVS  %>%
+    filter(PARAMN == {{paramn_val}}) %>%
+    filter(VISITNUM > 3) 
+  
+  param_plot <- {{plot_template}} %+%
+    param_data
+  
+  xLab <- quo_name(param_plot$mapping$x)
+  yLab <- quo_name(param_plot$mapping$y)
+  groupLab <- quo_name(param_plot$mapping$group)
+  
+  study <- uniqueVal(param_plot$data$STUDYID)
+  measure <- uniqueVal(param_plot$data$PARAM)
+  
+  
+  xLab <- ifelse(xLab == "ADY", "Analysis Relative Day", xLab)
+  groupLab <- case_when(groupLab == "USUBJID" ~ "Subject", 
+                        groupLab == "TRTA" ~ "Treatment",
+                        TRUE ~ groupLab)
+  
+  param_plot + 
+    labs(title = glue::glue("Study {study}"),
+         subtitle = glue::glue("Plot of {measure} by {groupLab}"),
+         x = xLab,
+         y = glue::glue("{measure}"))
+
+  
+}
+
+ADVS_2 <- import("https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdiscpilot01/advs.xpt")
+PulseRate_plot <- create_plot(plot4, 3)
+PulseRate_plot
+
+```
+
+```{r}
 sessioninfo::session_info()
 ```
