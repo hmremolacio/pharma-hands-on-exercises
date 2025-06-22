@@ -1,7 +1,7 @@
 ---
 title: "Mini-project 6 - {ggplot2} extensions"
-author: "Mike K Smith"
-date: "2/21/2023"
+author: "Hazel M. Remolacio"
+date: "5/24/2025"
 output: html_document
 ---
 
@@ -85,7 +85,7 @@ The predicate used in `gghighlight` here checks whether each subject has *any* v
 library(gghighlight)
 
 plot1c <- plot1b +
-  gghighlight::gghighlight(any(LBNRIND = "")) 
+  gghighlight::gghighlight(any(LBNRIND == "HIGH" | LBNRIND == "LOW")) 
 
 plot1c
 ```
@@ -95,7 +95,7 @@ In order to use facetting with `gghighlight` you need to set the argument `calcu
 ```{r}
 plot1d <- plot1b  +
   facet_wrap( ~ TRTP) + 
-  gghighlight::gghighlight(any(LBNRIND = ""), 
+  gghighlight::gghighlight(any(LBNRIND == "HIGH" | LBNRIND == "LOW"), 
                            calculate_per_facet = TRUE) 
 plot1d
 ```
@@ -119,17 +119,17 @@ Now let's add data on top of the boxplots. We can do this quite easily using `ge
 ALT2 %>%
   filter(WEEK %in% c(0, 5, 10, 15, 20, 25, 30)) %>%
   ggplot( ) +
-  geom_boxplot( ) +
-  geom_point( )
+  geom_boxplot(mapping = aes(x = as.factor(WEEK), y = LBSTRESN)) +
+  geom_point(mapping = aes(x = as.factor(WEEK), y = LBSTRESN))
 ```
 
 It might be more useful to spread out the points a little so that we can see individual points. We do this using `geom_jitter`. We can also apply the `alpha` setting to the points to add transparency so we can see the boxplots beneath. The `width` option in `geom_jitter` controls the horizontal jittering of the points. Smaller values will cluster them closer to the middle of the boxplot. The default is to use the full width of the boxplot. Note that in `geom_boxplot` we set the argument `outlier.shape = NA` which will "turn off" showing the outliers, since in this case we show them via `geom_jitter` we don't need to show them in the boxplot ***as well***.
 
 ```{r}
 plot2b <- ALT2 %>%
-  filter( ) %>%
-  ggplot(mapping = aes(x = , y = )) +
-  geom_boxplot(  ) +
+  filter(WEEK %in% c(0, 5, 10, 15, 20, 25, 30)) %>%
+  ggplot(mapping = aes(x = as.factor(WEEK) , y = LBSTRESN, fill = as.factor(WEEK))) +
+  geom_boxplot(outlier.shape = NA) +
   geom_jitter(alpha = 0.2, width = 0.1)
 
 plot2b
@@ -168,7 +168,7 @@ The `{ggridges}` package takes this presentation of distributions and slightly o
 library(ggridges)
 ALT2 %>%
   filter(WEEK %in% c(0, 5, 10, 15, 20, 25, 30)) %>%
-  ggplot(mapping = aes(x = LBSTRESN, y = as.factor(WEEK))) +
+  ggplot(mapping = aes(x = LBSTRESN, y = as.factor(WEEK), fill = as.factor(WEEK))) +
   coord_cartesian(xlim=c(0, 80)) +
   geom_density_ridges()
 ```
@@ -182,7 +182,7 @@ Use the "Data visualization with ggplot2" Cheat Sheet (from the Help menu in RSt
 ```{r}
 ALT2 %>%
   ggplot() +
-  geom_bar(mapping = aes( ))
+  geom_bar(mapping = aes(x = WEEK, fill = LBNRIND))
 ```
 
 Most individuals have Lab measurements on weeks 2, 4, 6, 8, 16, 24, 26. Let's filter the data to show JUST those weeks.
@@ -225,15 +225,19 @@ As we did in the last mini project, we can now take plots `plot1b` and `plot2b` 
 
 ```{r}
 plot1e <- plot1b +
-  labs(x =  ,
-       y =   )
+  labs(x = "Analysis Relative Day",
+       y = "ALT (U/L)")
 
 plot2c <- plot2b +
-  labs(x =  , y =   )
+  labs(x = "WEEK", y =  "ALT (U/L)")
 
 plot3c <- plot3b +
-  labs(x =  ,
-       y =  )
+  labs(x = "WEEK",
+       y = "Count")
+
+plot1e
+plot2c
+plot3c
 ```
 
 ## 7. Using `{patchwork}`
@@ -262,8 +266,8 @@ You can then use these combined plots as one object, provide a title for the com
 
 ```{r}
 p2b <- p2 + plot_annotation(
-  title =  ,
-  subtitle =  ,
+  title = unique(ALT$STUDYID) ,
+  subtitle =  "Plot of ALT Measurements during Active Study Period",
   tag_levels="a", tag_suffix = ")")
 
 p2b
@@ -288,6 +292,32 @@ Using what you've learned in this Mini Project 6, please try to create a graph s
 
 ```{r, echo=FALSE}
 knitr::include_graphics(path = "img/MiniProject6_challenge.png")
+```
+
+```{r}
+#Create new dataset that includes all study weeks
+ALT3 <- ALT %>%
+  mutate(WEEK = floor(ADY/7))
+
+#Create dataset with ALT outside normal range
+ALT3_outrange <- ALT3 %>% 
+  filter(LBNRIND == "HIGH" | LBNRIND == "LOW") %>% 
+  filter(WEEK %in% c(2, 4, 6, 8, 16, 24, 26))
+
+
+#Create plot
+plot_challenge <- ALT3 %>%
+  filter(WEEK %in% c(2, 4, 6, 8, 16, 24, 26)) %>%
+  ggplot(mapping = aes(x = LBSTRESN, y = as.factor(WEEK))) +
+  coord_cartesian(xlim = c(0, 125)) +
+  stat_dotsinterval(quantiles = 100, scale = NA) +
+  geom_point(data = ALT3_outrange, mapping = aes(x = LBSTRESN, color = "red")) +
+  labs(x = "Alanine Aminotransferase U/L",
+       y = "Week")
+
+ggdraw(plot_challenge) + 
+  draw_label("DRAFT", color = "grey", alpha=0.3, size = 100, angle = 45) 
+
 ```
 
 ```{r}
