@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(haven)
+library(rio)
 ```
 
 ## 1. Introduction
@@ -247,7 +248,8 @@ adsl_counts <- function(dataFile){
   return(adsl_mrg_cnt)
 }
 
-inFile <- "https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adae.xpt"
+#inFile <- "https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adae.xpt"
+inFile <- "https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adsl.xpt"
 
 adsl_counts(inFile)
 
@@ -377,3 +379,45 @@ In the code above we are allowing the user to pass the `digits` argument through
 ## Challenge
 
 Convert the code you wrote in the Mini Project 6 challenge into a function that takes an input `adlb` dataset and produces the graph. For an additional challenge, allow the user to specify the axes labels.
+```{r}
+library(rio)
+library(tidyverse)
+library(ggdist)
+library(cowplot)
+
+
+adlb_dotplot <- function(adlb, xlab = NULL, ylab = NULL){
+
+ALT <- {{adlb}}  %>%
+  filter(PARAMCD == "ALT")
+
+#Create new dataset that includes all study weeks
+ALT2 <- ALT %>%
+  mutate(WEEK = floor(ADY/7))
+
+#Create dataset with ALT outside normal range
+ALT2_outrange <- ALT2 %>% 
+  filter(LBNRIND == "HIGH" | LBNRIND == "LOW") %>% 
+  filter(WEEK %in% c(2, 4, 6, 8, 16, 24, 26))
+
+
+#Create plot
+plot_challenge <- ALT2 %>%
+  filter(WEEK %in% c(2, 4, 6, 8, 16, 24, 26)) %>%
+  ggplot(mapping = aes(x = LBSTRESN, y = as.factor(WEEK))) +
+  coord_cartesian(xlim = c(0, 125)) +
+  stat_dotsinterval(quantiles = 100, scale = NA) +
+  geom_point(data = ALT2_outrange, mapping = aes(x = LBSTRESN, color = "red")) +
+  labs(x = xlab,
+       y = ylab)
+
+ggdraw(plot_challenge) + 
+  draw_label("DRAFT", color = "grey", alpha=0.3, size = 100, angle = 45) 
+}
+
+
+ADLB_data <- import("https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adlbc.xpt");
+
+adlb_dotplot(ADLB_data, xlab = "Alanine Aminotransferase U/L", ylab = "Week")
+
+```
