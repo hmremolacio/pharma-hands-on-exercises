@@ -1,6 +1,6 @@
 ---
 title: "Mini-project 8 - Applying functions through iteration"
-author: "Hazel M. Remolacio"
+author: "Hazel M. Remolacio" 
 date: "6/27/2025"
 output: html_document
 ---
