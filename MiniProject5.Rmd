@@ -119,6 +119,8 @@ plot2
 You can also choose a theme for the plot from a wide range of `{ggplot2}` themes. Other themes are available from a variety of `{ggplot2}` helper packages such as `{cowplot}`. Try out some different themes using `theme_...` functions to see which one you like best.
 
 ```{r}
+library(cowplot)
+
 plot3 <- plot2 +
   theme_bw()
 plot3
