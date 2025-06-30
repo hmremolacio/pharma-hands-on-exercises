@@ -1,6 +1,6 @@
 ---
 title: "Mini-project 3 - Generating grouped summary statistics"
-author: "Hazel M. Remolacio"
+author: "Hazel M. Remolacio" 
 date: "02/25/2025"
 output: html_document
 ---
