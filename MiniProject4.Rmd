@@ -1,6 +1,6 @@
 ---
 title: "Mini-project 4 - Creating summary table data"
-author: "Hazel M. Remolacio"
+author: "Hazel M. Remolacio" 
 date: "3/20/2025"
 output: html_document
 ---
