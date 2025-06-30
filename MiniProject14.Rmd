@@ -1,6 +1,6 @@
 ---
 title: "Mini-project 14 - R snippets"
-author: "Hazel Remolacio"
+author: "Hazel Remolacio" 
 date: "5/12/2025"
 output: html_document
 ---
