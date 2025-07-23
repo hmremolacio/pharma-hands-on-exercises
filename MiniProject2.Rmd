@@ -1,6 +1,6 @@
 ---
 title: "Mini-project 2 - Summarising continuous and categorical data"
-author: "Hazel M. Remolacio"
+author: "Hazel M. Remolacio" 
 date: "02/21/2025"
 output: html_document 
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Mini-project 6 - {ggplot2} extensions"
-author: "Hazel M. Remolacio"
+author: "Hazel M. Remolacio" 
 date: "5/24/2025"
 output: html_document
 ---

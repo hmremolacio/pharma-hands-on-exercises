@@ -1,6 +1,6 @@
 ---
 title: "Mini-project 14 - R snippets"
-author: "Hazel Remolacio"
+author: "Hazel Remolacio" 
 date: "5/12/2025"
 output: html_document
 ---
@@ -46,34 +46,34 @@ If you have typed the character sequence for a snippet and want to insert it imm
 
 
 ```{r common_snip}
-library(package)
-require(package)
-source("file.R")
-df
-matrix(data, nrow = rows, ncol = cols)
-if (condition) {
-  
-}
-else {
-  
-}
-else if (condition) {
-  
-}
-apply(array, margin, ...)
-lapply(list, function)
-sapply(list, function)
-library(shiny)
-
-ui <- fluidPage(
-  
-)
-
-server <- function(input, output, session) {
-  
-}
-
-shinyApp(ui, server)
+# library(package)
+# require(package)
+# source("file.R")
+# df
+# matrix(data, nrow = rows, ncol = cols)
+# if (condition) {
+#   
+# }
+# else {
+#
+# }
+# else if (condition) {
+#   
+# }
+# apply(array, margin, ...)
+# lapply(list, function)
+# sapply(list, function)
+# library(shiny)
+# 
+# ui <- fluidPage(
+#   
+# )
+# 
+# server <- function(input, output, session) {
+#   
+# }
+# 
+# shinyApp(ui, server)
 ```
 
 ## Customizing Snippets
@@ -185,7 +185,7 @@ This snippet will set your working directory, and then also load whatever packag
 
 ```{r}
 ######################################################################
-path1 <- setwd("${1:path}")
+# path1 <- setwd("${1:path}")
 
 library(knitr)
 library(tinytex)
@@ -197,7 +197,7 @@ library(rmarkdown)
 
 #Applying the R snippet using my_lib
 ######################################################################
-path1 <- setwd("path")
+path1 <- setwd("/cloud/project")
 
 library(knitr)
 library(tinytex)
@@ -213,37 +213,37 @@ If you spend a fair amount of time setting up and adjusting a graph to be just t
 
 ```{r}
 ######################################################################
-ggplot(${1:data}, aes(x=${2:variable}, y=${3:variable})) + 
-  geom_col(color = "black", fill="#0072B2") +
-  theme_minimal() +
-  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "gray"),
-        plot.title = element_text(hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5)
-  ) +
-  scale_y_continuous(label = comma) + 
-  xlab("") +
-  ylab("") +
-  geom_text(aes(label=${3:variable}), vjust=1.5, colour="white", position=position_dodge(.9), size=5) +
-  ggtitle("<Enter Text>", subtitle = "<Enter Text>")
+# ggplot(${1:data}, aes(x=${2:variable}, y=${3:variable})) + 
+#   geom_col(color = "black", fill="#0072B2") +
+#   theme_minimal() +
+#   theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+#         panel.grid.minor = element_blank(), axis.line = element_line(colour = "gray"),
+#         plot.title = element_text(hjust = 0.5),
+#         plot.subtitle = element_text(hjust = 0.5)
+#   ) +
+#   scale_y_continuous(label = comma) + 
+#   xlab("") +
+#   ylab("") +
+#   geom_text(aes(label=${3:variable}), vjust=1.5, colour="white", position=position_dodge(.9), size=5) +
+#   ggtitle("<Enter Text>", subtitle = "<Enter Text>")
 ######################################################################
 
 
 #Applying the R snippet using my_plot
 ######################################################################
-ggplot(data, aes(x=variable, y=variable)) + 
-  geom_col(color = "black", fill="#0072B2") +
-  theme_minimal() +
-  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "gray"),
-        plot.title = element_text(hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5)
-  ) +
-  scale_y_continuous(label = comma) + 
-  xlab("") +
-  ylab("") +
-  geom_text(aes(label=variable), vjust=1.5, colour="white", position=position_dodge(.9), size=5) +
-  ggtitle("<Enter Text>", subtitle = "<Enter Text>")
+# ggplot(data, aes(x=variable, y=variable)) + 
+#   geom_col(color = "black", fill="#0072B2") +
+#   theme_minimal() +
+#   theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+#         panel.grid.minor = element_blank(), axis.line = element_line(colour = "gray"),
+#         plot.title = element_text(hjust = 0.5),
+#         plot.subtitle = element_text(hjust = 0.5)
+#   ) +
+#   scale_y_continuous(label = comma) + 
+#   xlab("") +
+#   ylab("") +
+#   geom_text(aes(label=variable), vjust=1.5, colour="white", position=position_dodge(.9), size=5) +
+#   ggtitle("<Enter Text>", subtitle = "<Enter Text>")
 ######################################################################
 ```
 

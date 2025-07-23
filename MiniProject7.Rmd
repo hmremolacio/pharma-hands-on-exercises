@@ -1,6 +1,6 @@
 ---
 title: "Mini-project 7 - Getting started writing functions"
-author: "Hazel M. Remolacio"
+author: "Hazel M. Remolacio" 
 date: "5/25/2025"
 output: html_document
 ---

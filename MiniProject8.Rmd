@@ -1,6 +1,6 @@
 ---
 title: "Mini-project 8 - Applying functions through iteration"
-author: "Hazel M. Remolacio"
+author: "Hazel M. Remolacio" 
 date: "6/27/2025"
 output: html_document
 ---
@@ -91,14 +91,14 @@ While this works, the code is a bit clunky. I see code like this (or variations 
 Note that this results in ***a vector of named elements***, rather than a dataset, so it's not so easy to extract the element you might want. Trying the `{tidyverse}` `select` statement results in an error.
 
 ```{r}
-counts %>%
-  select(STUDYID)
+# counts %>%
+#   select(STUDYID)
 ```
 
 It's not immediately clear from the error above exactly what the problem is. Subsetting by variable name, assuming that `counts` is a data frame (and so has two dimensions):
 
 ```{r}
-counts[,"STUDYID"]
+# counts[,"STUDYID"]
 ```
 
 Again, the error is a little cryptic. And while ***you*** might remember that this is a named vector, someone else checking your code is highly likely to miss this.
@@ -222,10 +222,10 @@ adsl_saf %>%
 An alternative might be `all_of` but then if a column is missing from the set, the operation will stop.
 
 ```{r}
-adsl_saf %>%
-  summarise(across(.cols = all_of(c("AGE","SEX", "RACE","ETHNIC","MIKE")),
-                   .fns = nonMissing)
-            )
+# adsl_saf %>%
+#   summarise(across(.cols = all_of(c("AGE","SEX", "RACE","ETHNIC","MIKE")),
+#                    .fns = nonMissing)
+#             )
 
 ```
 
