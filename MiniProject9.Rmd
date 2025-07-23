@@ -2,7 +2,7 @@
 title: "Mini-project 9 - Reproducible examples and {reprex}"
 author: "Hazel Remolacio"
 date: "7/22/25"
-output: html_document
+output: html_document 
 ---
 
 ```{r packages}
