@@ -1,7 +1,7 @@
 ---
 title: "Mini-project 9 - Reproducible examples and {reprex}"
-author: "Leanne Vicente"
-date: "3/8/2023"
+author: "Hazel Remolacio"
+date: "7/22/25"
 output: html_document
 ---
 
@@ -38,7 +38,6 @@ It ALSO copies the contents of that window back to your clipboard so you can sim
 2.  Now, lets take some code that we used back in the first round of mini projects to recode the variable SEX and look at the reprex for that. So again, copy all code in the following chunk, and then type reprex() into your console at the bottom of you screen.
 
 ```{r age data}
-
 adsl <- import("https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adsl.xpt")
 
 adsl_saf <- adsl %>%
@@ -110,7 +109,6 @@ TREATfac <- ALT2 %>%
 
 ALT2 <- ALT2 %>%
   mutate(TREATTXT = factor(TRTP, levels = TREATfac$TRTA))
-
 ```
 
 ```         
@@ -350,4 +348,39 @@ BICARB <- adlb %>%
 ggplot(data = BICARB,
        mapping = aes(x = ADY, y = AVAL)) +
   geom_point(aes(colour = "THERAPY1"))
+```
+
+```{r challenge}
+library(tidyverse)
+library(rio)
+
+adlb <- import("https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adlbh.xpt")
+
+BICARB <- adlb %>%  
+    filter(SAFFL == "Y") %>% 
+    filter(PARAMCD == "BASO")
+
+#creating a minimal dataset for reprex
+rows <- sample(1:nrow(BICARB), size = 5, replace = FALSE)
+BICARB2 <- BICARB %>% select(ADY, AVAL) %>% slice(rows)
+
+
+#codes for reprex
+library(tidyverse)
+
+BICARB_sample <- tribble(
+  ~ADY, ~AVAL,
+  114, 0.04,
+  188, 0.03,
+  174, 0.04,
+  74, 0.04,
+  92, 0.07
+  )
+
+BICARB_sample
+
+ggplot(data = BICARB_sample,
+       mapping = aes(x = ADY, y = AVAL)) +
+  geom_point(aes(colour = "THERAPY1"))
+
 ```
